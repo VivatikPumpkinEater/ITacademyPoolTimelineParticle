@@ -6,7 +6,7 @@ public class Pool : MonoBehaviour
 {
 [SerializeField] private PoolObject _prefab = null;
     [SerializeField] private Transform _container = null;
-    [SerializeField] private int _minCopacity = 1, _maxCopacity = 1, _addObject = 5;
+    [SerializeField] private int _minCopacity = 1;
 
     private List<PoolObject> _pool = new List<PoolObject>();
 
@@ -57,11 +57,6 @@ public class Pool : MonoBehaviour
         if (TryGetElement(out var element))
         {
             return element;
-        }
-
-        if (_maxCopacity < _pool.Count)
-        {
-            _maxCopacity += _addObject;
         }
         
         return CreateElement();
