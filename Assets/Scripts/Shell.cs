@@ -11,6 +11,9 @@ public class Shell : MonoBehaviour
 
     [SerializeField] private Transform _trailPosition = null;
 
+    [Range(-10, -5)]
+    [SerializeField] private float _gravity = -10f;
+    
     [SerializeField] private float _speed = 100f;
     [SerializeField] private float _explosionRadius = 2f;
     [SerializeField] private float _explosionForce = 1000f;
@@ -36,7 +39,7 @@ public class Shell : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rb.velocity = (transform.forward * _speed) + transform.up * -10f;
+        _rb.velocity = (transform.forward * _speed) + transform.up * _gravity;
 
         if (_startShell)
         {
@@ -62,7 +65,7 @@ public class Shell : MonoBehaviour
 
             _startShell = true;
             
-            SoundManager.Instance.Explosion(transform.position);
+            SoundManager.Instance.GetSound("Explosion",transform.position);
             
             _poolObject.ReturnToPool();
         }

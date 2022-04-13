@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    [SerializeField] private AudioClip _tankIdle = null;
+    [SerializeField] private List<Clips> _audioClipsses;
+
+    [SerializeField] private List<Source> _audioSourcees;
+    /*[SerializeField] private AudioClip _tankIdle = null;
     [SerializeField] private AudioClip _tankDrive = null;
     [SerializeField] private AudioClip _shoot = null;
-    [SerializeField] private AudioClip _explosion = null;
+    [SerializeField] private AudioClip _explosion = null;*/
 
     public EtankStatus TankStatus;
     public enum EtankStatus
@@ -30,7 +33,40 @@ public class SoundManager : MonoBehaviour
         Instance = this;
     }
 
-    public void ChangeTankSound(AudioSource audioSource)
+    public AudioClip GetSound(string key)
+    {
+        foreach (var clipss in _audioClipsses)
+        {
+            if (clipss.Key == key)
+            {
+                return clipss.AudioClip;
+            }
+        }
+        
+        Debug.LogError("No sound");
+        return null;
+    }
+
+    public void GetSound(string key, Vector3 position)
+    {
+        foreach (var audioSourcee in _audioSourcees)
+        {
+            if (audioSourcee.Key == key)
+            {
+                var soundEffect = Instantiate(audioSourcee.AudioSource);
+                soundEffect.transform.position = position;
+
+                soundEffect.clip = GetSound(key);
+                soundEffect.Play();
+
+                Destroy(soundEffect.gameObject, 2f);
+                return;
+            }
+        }
+        
+    }
+
+    /*public void ChangeTankSound(AudioSource audioSource)
     {
         switch (TankStatus)
         {
@@ -45,9 +81,9 @@ public class SoundManager : MonoBehaviour
         audioSource.Play();
     }
 
-    public void Shoot(Vector3 position)
+    public void Shoot(Vector3 position) // rewrite to key value logic
     {
-        GameObject shootEffect = new GameObject();
+        GameObject shootEffect = new GameObject(); // Prefab
         shootEffect.transform.position = position;
         
         var audio = shootEffect.AddComponent<AudioSource>();
@@ -63,9 +99,23 @@ public class SoundManager : MonoBehaviour
         explosionEffect.transform.position = position;
         
         var audio = explosionEffect.AddComponent<AudioSource>();
-        audio.clip = _shoot;
+        audio.clip = _explosion;
         audio.Play();
         
         Destroy(explosionEffect, 2f);
-    }
+    }*/
+}
+
+[Serializable]
+public struct Clips
+{
+    public string Key;
+    public AudioClip AudioClip;
+}
+
+[Serializable]
+public struct Source
+{
+    public string Key;
+    public AudioSource AudioSource;
 }

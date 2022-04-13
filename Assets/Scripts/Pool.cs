@@ -4,23 +4,24 @@ using UnityEngine;
 
 public class Pool : MonoBehaviour
 {
-[SerializeField] private PoolObject _prefab = null;
+    [SerializeField] private PoolObject _prefab = null;
     [SerializeField] private Transform _container = null;
-    [SerializeField] private int _minCopacity = 1;
+    [SerializeField] private int _startCopacity = 1;
 
     private List<PoolObject> _pool = new List<PoolObject>();
 
-    private void Start()
+    private void Awake()
     {
         _pool.Clear();
+
         CreatePool();
     }
 
     private void CreatePool()
     {
-        _pool = new List<PoolObject>(_minCopacity);
+        _pool = new List<PoolObject>();
 
-        for (int i = 0; i < _minCopacity; i++)
+        for (int i = 0; i < _startCopacity; i++)
         {
             CreateElement();
         }
@@ -30,13 +31,13 @@ public class Pool : MonoBehaviour
     {
         var createObject = Instantiate(_prefab, _container);
         createObject.gameObject.SetActive(false);
-        
+
         _pool.Add(createObject);
 
-        return createObject;
+        return createObject; // ?
     }
 
-    private bool TryGetElement(out PoolObject element)
+    private void TryGetElement(out PoolObject element)
     {
         foreach (var i in _pool)
         {
@@ -44,22 +45,19 @@ public class Pool : MonoBehaviour
             {
                 element = i;
                 i.gameObject.SetActive(true);
-                return true;
+                return;
             }
         }
 
-        element = null;
-        return false;
+        element = CreateElement();
+        element.gameObject.SetActive(true);
     }
 
-    public PoolObject GetFreeElement()
+    public PoolObject GetFreeElement() // 
     {
-        if (TryGetElement(out var element))
-        {
-            return element;
-        }
-        
-        return CreateElement();
+        TryGetElement(out var element);
+
+        return element;
     }
 
     public PoolObject GetFreeElement(Vector3 position)
@@ -69,14 +67,14 @@ public class Pool : MonoBehaviour
         return element;
     }
 
-    public PoolObject GetFreeElement(Transform position)
+    public PoolObject GetFreeElement(Transform transform) // transform or pivot
     {
         var element = GetFreeElement();
-        element.transform.position = position.position;
-        element.transform.rotation = position.rotation;
+        element.transform.position = transform.position;
+        element.transform.rotation = transform.rotation;
         return element;
     }
-    
+
     public PoolObject GetFreeElement(Vector3 position, Quaternion rotation)
     {
         var element = GetFreeElement(position);

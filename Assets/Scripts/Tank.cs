@@ -36,7 +36,7 @@ public class Tank : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SoundManager.Instance.Shoot(transform.position);
+            SoundManager.Instance.GetSound("Shoot",transform.position);
             
             Shoot();
         }
@@ -56,16 +56,18 @@ public class Tank : MonoBehaviour
 
             if (!_drive)
             {
-                SoundManager.Instance.TankStatus = SoundManager.EtankStatus.drive;
-                SoundManager.Instance.ChangeTankSound(_audio);
+                _audio.clip = SoundManager.Instance.GetSound("TankDrive");
+                _audio.Play();
+                
                 _drive = true;
                 _idle = false;
             }
         }
         else if(!_idle)
         {
-            SoundManager.Instance.TankStatus = SoundManager.EtankStatus.idle;
-            SoundManager.Instance.ChangeTankSound(_audio);
+            _audio.clip = SoundManager.Instance.GetSound("TankIdle");
+            _audio.Play();
+            
             _idle = true;
             _drive = false;
         }
